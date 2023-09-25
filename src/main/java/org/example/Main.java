@@ -4,9 +4,10 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
-    private static AtomicInteger count3 = new AtomicInteger(0);
-    private static AtomicInteger count4 = new AtomicInteger(0);
-    private static AtomicInteger count5 = new AtomicInteger(0);
+    static AtomicInteger count3;
+    static AtomicInteger count4;
+    static AtomicInteger count5;
+
 
     public static void main(String[] args) throws InterruptedException {
         Random random = new Random();
@@ -14,10 +15,14 @@ public class Main {
         for (int i = 0; i < texts.length; i++) {
             texts[i] = generateText("abc", 3 + random.nextInt(3));
         }
+        count3 = new AtomicInteger(0);
+        count4 = new AtomicInteger(0);
+        count5 = new AtomicInteger(0);
+
         Thread thread1 = new Thread(() -> {
             for (String text : texts) {
                 if (isPalindrome(text)) {
-                    count3.incrementAndGet();
+                    counter(text);
                 }
             }
         });
@@ -27,7 +32,7 @@ public class Main {
         Thread thread2 = new Thread(() -> {
             for (String text : texts) {
                 if (isSameLetter(text)) {
-                    count4.incrementAndGet();
+                    counter(text);
                 }
             }
         });
@@ -36,7 +41,7 @@ public class Main {
         Thread thread3 = new Thread(() -> {
             for (String text : texts) {
                 if (isIncreasingLetters(text)) {
-                    count5.incrementAndGet();
+                    counter(text);
                 }
             }
         });
@@ -51,6 +56,12 @@ public class Main {
         System.out.println("Красивых слов с длиной 5: " + count5.get() + " шт");
     }
 
+    public static void counter(String text) {
+        int lengthText = text.length();
+        if (lengthText == 3) count3.getAndIncrement();
+        if (lengthText == 4) count4.getAndIncrement();
+        if (lengthText == 5) count5.getAndIncrement();
+    }
 
     public static String generateText(String letters, int length) {
         Random random = new Random();
